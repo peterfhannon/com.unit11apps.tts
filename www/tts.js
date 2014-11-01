@@ -13,7 +13,7 @@ var utils  = require("cordova/utils");
 //------------------------------------------------------------------------------
 var tts = module.exports;
 
-tts.speak = function()
+tts.speak = function(message)
 {
     exec(null, null, "tts", "speak", [message]);
 }

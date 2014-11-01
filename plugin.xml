@@ -34,7 +34,7 @@
 
         <config-file target="config.xml" parent="/*">
 		<feature name="tts">
-			<param name="ios-package" value="tts"/>
+			<param name="ios-package" value="TTS"/>
 		</feature>
         </config-file>
 
