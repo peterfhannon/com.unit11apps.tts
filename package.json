@@ -1,0 +1,18 @@
+{
+    "version": "0.1.0",
+    "name": "com.unit11apps.tts",
+    "cordova_name": "tts",
+    "description": "Unit11 tts Plugin",
+    "license": "",
+    "repo": "",
+    "issue": "",
+    "keywords": [
+        "cordova",
+        "tts"
+    ],
+    "platforms": [
+        "ios"
+    ],
+    "engines": [],
+    "englishdoc": ""
+}
