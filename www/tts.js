@@ -1,4 +1,4 @@
-/*
+cordova.define("com.unit11apps.tts.tts", function(require, exports, module) { /*
  *
  *
 */
@@ -17,3 +17,5 @@ tts.speak = function(message)
 {
     exec(null, null, "tts", "speak", [message]);
 }
+
+});
