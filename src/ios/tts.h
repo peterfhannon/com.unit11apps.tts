@@ -9,6 +9,10 @@
 
 @property (nonatomic, strong) AVSpeechSynthesizer *synthesizer;
 
+- (void)startup:(CDVInvokedUrlCommand*)command;
+
 - (void)speak:(CDVInvokedUrlCommand*)command;
+
+- (void)stop:(CDVInvokedUrlCommand*)command;
 
 @end

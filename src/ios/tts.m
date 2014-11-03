@@ -15,7 +15,11 @@
 
 }
 
-/* log a message */
+- (void)startup:(CDVInvokedUrlCommand*)command
+{
+    //Nothing
+}
+
 - (void)speak:(CDVInvokedUrlCommand*)command
 {
     id message = [command.arguments objectAtIndex:0];
@@ -28,6 +32,11 @@
     utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"en-GB"];
     
     [self.synthesizer speakUtterance:utterance];
+}
+
+- (void)stop:(CDVInvokedUrlCommand*)command
+{
+    [self.synthesizer stopSpeakingAtBoundary:true];
 }
 
 @end
