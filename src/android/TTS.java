@@ -8,7 +8,7 @@
  *
  */
 
-package org.apache.cordova.plugin;
+package com.unit11apps.tts;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -22,7 +22,9 @@ import android.speech.tts.TextToSpeech.OnInitListener;
 import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
 
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
 
 public class TTS extends CordovaPlugin implements OnInitListener, OnUtteranceCompletedListener {
@@ -37,6 +39,17 @@ public class TTS extends CordovaPlugin implements OnInitListener, OnUtteranceCom
     private CallbackContext callbackContext;
 
     //private String startupCallbackId = "";
+    
+    /**
+     * Sets the context of the Command. This can then be used to do things like
+     * get file paths associated with the Activity.
+     *
+     * @param cordova The context of the main Activity.
+     * @param webView The CordovaWebView Cordova is running in.
+     */
+    public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+        super.initialize(cordova, webView);
+    }
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
@@ -45,29 +58,34 @@ public class TTS extends CordovaPlugin implements OnInitListener, OnUtteranceCom
         this.callbackContext = callbackContext;
 
         try {
-            if (action.equals("speak")) {
+	        if (action.equals("startup")) {
+	
+	            this.startupCallbackContext = callbackContext;
+	            if (mTts == null) {
+	                state = TTS.INITIALIZING;
+	                mTts = new TextToSpeech(cordova.getActivity().getApplicationContext(), this);
+				    PluginResult pluginResult = new PluginResult(status, TTS.INITIALIZING);
+				    pluginResult.setKeepCallback(true);
+				    // do not send this as onInit is more reliable: domaemon
+				    // startupCallbackContext.sendPluginResult(pluginResult);
+			    } else {
+				    PluginResult pluginResult = new PluginResult(status, TTS.INITIALIZING);
+				    pluginResult.setKeepCallback(true);
+				    startupCallbackContext.sendPluginResult(pluginResult);
+	            }
+	        }
+	        else if (action.equals("shutdown")) {
+	            if (mTts != null) {
+	                mTts.shutdown();
+	            }
+	            callbackContext.sendPluginResult(new PluginResult(status, result));
+	        } else if (action.equals("speak")) {
                 String text = args.getString(0);
                 if (isReady()) {
                     HashMap<String, String> map = null;
                     map = new HashMap<String, String>();
                     map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, callbackContext.getCallbackId());
                     mTts.speak(text, TextToSpeech.QUEUE_ADD, map);
-                    PluginResult pr = new PluginResult(PluginResult.Status.NO_RESULT);
-                    pr.setKeepCallback(true);
-                    callbackContext.sendPluginResult(pr);
-                } else {
-                    JSONObject error = new JSONObject();
-                    error.put("message","TTS service is still initialzing.");
-                    error.put("code", TTS.INITIALIZING);
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, error));
-                }
-            } else if (action.equals("interrupt")) {
-                String text = args.getString(0);
-                if (isReady()) {
-                    HashMap<String, String> map = null;
-                    map = new HashMap<String, String>();
-                    //map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, callbackId);
-                    mTts.speak(text, TextToSpeech.QUEUE_FLUSH, map);
                     PluginResult pr = new PluginResult(PluginResult.Status.NO_RESULT);
                     pr.setKeepCallback(true);
                     callbackContext.sendPluginResult(pr);
@@ -87,87 +105,7 @@ public class TTS extends CordovaPlugin implements OnInitListener, OnUtteranceCom
                     error.put("code", TTS.INITIALIZING);
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, error));
                 }
-            } else if (action.equals("silence")) {
-                if (isReady()) {
-                    HashMap<String, String> map = null;
-                    map = new HashMap<String, String>();
-                    map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, callbackContext.getCallbackId());
-                    mTts.playSilence(args.getLong(0), TextToSpeech.QUEUE_ADD, map);
-                    PluginResult pr = new PluginResult(PluginResult.Status.NO_RESULT);
-                    pr.setKeepCallback(true);
-                    callbackContext.sendPluginResult(pr);
-                } else {
-                    JSONObject error = new JSONObject();
-                    error.put("message","TTS service is still initialzing.");
-                    error.put("code", TTS.INITIALIZING);
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, error));
-                }
-            } else if (action.equals("speed")) {
-                if (isReady()) {
-                    float speed= (float) (args.optLong(0, 100)) /(float) 100.0;
-                    mTts.setSpeechRate(speed);
-                    callbackContext.sendPluginResult(new PluginResult(status, result));
-                } else {
-                    JSONObject error = new JSONObject();
-                    error.put("message","TTS service is still initialzing.");
-                    error.put("code", TTS.INITIALIZING);
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, error));
-                }
-            } else if (action.equals("pitch")) {
-                if (isReady()) {
-                    float pitch= (float) (args.optLong(0, 100)) /(float) 100.0;
-                    mTts.setPitch(pitch);
-                    callbackContext.sendPluginResult(new PluginResult(status, result));
-                } else {
-                    JSONObject error = new JSONObject();
-                    error.put("message","TTS service is still initialzing.");
-                    error.put("code", TTS.INITIALIZING);
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, error));
-                }
-            } else if (action.equals("startup")) {
-
-                this.startupCallbackContext = callbackContext;
-                if (mTts == null) {
-                    state = TTS.INITIALIZING;
-                    mTts = new TextToSpeech(cordova.getActivity().getApplicationContext(), this);
-		    PluginResult pluginResult = new PluginResult(status, TTS.INITIALIZING);
-		    pluginResult.setKeepCallback(true);
-		    // do not send this as onInit is more reliable: domaemon
-		    // startupCallbackContext.sendPluginResult(pluginResult);
-                } else {
-		    PluginResult pluginResult = new PluginResult(status, TTS.INITIALIZING);
-		    pluginResult.setKeepCallback(true);
-		    startupCallbackContext.sendPluginResult(pluginResult);
-		}
-            }
-            else if (action.equals("shutdown")) {
-                if (mTts != null) {
-                    mTts.shutdown();
-                }
-                callbackContext.sendPluginResult(new PluginResult(status, result));
-            }
-            else if (action.equals("getLanguage")) {
-                if (mTts != null) {
-                    result = mTts.getLanguage().toString();
-                    callbackContext.sendPluginResult(new PluginResult(status, result));
-                }
-            }
-            else if (action.equals("isLanguageAvailable")) {
-                if (mTts != null) {
-                    Locale loc = new Locale(args.getString(0));
-                    int available = mTts.isLanguageAvailable(loc);
-                    result = (available < 0) ? "false" : "true";
-                    callbackContext.sendPluginResult(new PluginResult(status, result));
-                }
-            }
-            else if (action.equals("setLanguage")) {
-                if (mTts != null) {
-                    Locale loc = new Locale(args.getString(0));
-                    int available = mTts.setLanguage(loc);
-                    result = (available < 0) ? "false" : "true";
-                    callbackContext.sendPluginResult(new PluginResult(status, result));
-                }
-            }
+            } 
             return true;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -196,7 +134,7 @@ public class TTS extends CordovaPlugin implements OnInitListener, OnUtteranceCom
             PluginResult result = new PluginResult(PluginResult.Status.OK, TTS.STARTED);
             result.setKeepCallback(false);
             //this.success(result, this.startupCallbackId);
-	    this.startupCallbackContext.sendPluginResult(result);
+	       this.startupCallbackContext.sendPluginResult(result);
             mTts.setOnUtteranceCompletedListener(this);
 //            Putting this code in hear as a place holder. When everything moves to API level 15 or greater
 //            we'll switch over to this way of trackign progress.

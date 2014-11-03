@@ -1,4 +1,4 @@
-/*
+cordova.define("com.unit11apps.tts.tts", function(require, exports, module) { /*
  *
  *
 */
@@ -17,6 +17,11 @@ var utils  = require("cordova/utils");
  * @constructor
  */
 var tts = {
+	startup : function(message, successCallback, errorCallback)
+	{
+	    exec(successCallback, errorCallback, "tts", "startup", []);
+	},
+	
 	/**
      * Speaks the given message
      * 
@@ -27,7 +32,7 @@ var tts = {
     speak : function(message, successCallback, errorCallback)
 	{
 	    exec(successCallback, errorCallback, "tts", "speak", [message]);
-	}
+	},
 
     /**
      * Stop any queued synthesized speech
@@ -44,3 +49,5 @@ var tts = {
 module.exports = tts;
 
 
+
+});

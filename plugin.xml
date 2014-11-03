@@ -49,10 +49,14 @@
     <platform name="android">
       <config-file target="res/xml/config.xml" parent="/*">
         <feature name="tts" >
-          <param name="android-package" value="TTS"/>
+          <param name="android-package" value="com.unit11apps.tts.TTS"/>
         </feature>
       </config-file>
+
+      <js-module src="www/tts.js" name="tts">
+          <clobbers target="tts" />
+      </js-module>
     
-      <source-file src="src/android/tts.java" target-dir="src/com/unit11apps/tts" />
+      <source-file src="src/android/TTS.java" target-dir="src/com/unit11apps/tts" />
   </platform>  
 </plugin>
