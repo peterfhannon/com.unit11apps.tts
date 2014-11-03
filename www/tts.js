@@ -1,4 +1,4 @@
-cordova.define("com.unit11apps.tts.tts", function(require, exports, module) { /*
+/*
  *
  *
 */
@@ -47,7 +47,3 @@ var tts = {
 };
 
 module.exports = tts;
-
-
-
-});
