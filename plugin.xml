@@ -33,18 +33,26 @@
     <platform name="ios">
 
         <config-file target="config.xml" parent="/*">
-		<feature name="tts">
-			<param name="ios-package" value="TTS"/>
-		</feature>
+    		<feature name="tts">
+    			<param name="ios-package" value="TTS"/>
+    		</feature>
         </config-file>
 
         <js-module src="www/tts.js" name="tts">
             <clobbers target="tts" />
         </js-module>
 
-	<header-file src="src/ios/tts.h" />
-	<source-file src="src/ios/tts.m" />
-
+      	<header-file src="src/ios/tts.h" />
+      	<source-file src="src/ios/tts.m" />
     </platform>
 
+    <platform name="android">
+      <config-file target="res/xml/config.xml" parent="/*">
+        <feature name="tts" >
+          <param name="android-package" value="TTS"/>
+        </feature>
+      </config-file>
+    
+      <source-file src="src/android/tts.java" target-dir="src/com/unit11apps/tts" />
+  </platform>  
 </plugin>

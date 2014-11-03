@@ -11,9 +11,36 @@ var utils  = require("cordova/utils");
 //------------------------------------------------------------------------------
 // object that we're exporting
 //------------------------------------------------------------------------------
-var tts = module.exports;
 
-tts.speak = function(message)
-{
-    exec(null, null, "tts", "speak", [message]);
-}
+/**
+ * tts object.
+ * @constructor
+ */
+var tts = {
+	/**
+     * Speaks the given message
+     * 
+     * @param {DOMString} message
+     * @param {Object} successCallback
+     * @param {Object} errorCallback
+     */
+    speak : function(message, successCallback, errorCallback)
+	{
+	    exec(successCallback, errorCallback, "tts", "speak", [message]);
+	}
+
+    /**
+     * Stop any queued synthesized speech
+     * 
+     * @param {DOMString} message
+     * @param {Object} successCallback
+     * @param {Object} errorCallback
+     */
+    stop: function(successCallback, errorCallback) {
+        exec(successCallback, errorCallback, "tts", "stop", []);
+    }
+};
+
+module.exports = tts;
+
+
